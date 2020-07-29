@@ -224,9 +224,7 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_spriteFrame": {
-      "__uuid__": "a3a5aeb7-3f86-4fd3-9508-d96bde94fa93"
-    },
+    "_spriteFrame": null,
     "_type": 0,
     "_sizeMode": 1,
     "_fillType": 0,
@@ -273,6 +271,9 @@
       },
       {
         "__uuid__": "b2174d9f-c0aa-4fd0-a172-d6aabf1f8c26"
+      },
+      {
+        "__uuid__": "61086bc4-bf2e-457a-bea5-281c504b2aa8"
       }
     ],
     "blackSprite": [
@@ -293,6 +294,9 @@
       },
       {
         "__uuid__": "98e0492a-4e91-4f59-bb95-483a433a522e"
+      },
+      {
+        "__uuid__": "ee7ee861-d2e5-48a6-8910-e57adb0833bd"
       }
     ],
     "DeathRedKing": {

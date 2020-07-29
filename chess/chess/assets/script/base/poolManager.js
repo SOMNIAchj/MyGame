@@ -1,4 +1,4 @@
-export default class poolMgr{
+export default class poolManager{
 
     constructor(){
 

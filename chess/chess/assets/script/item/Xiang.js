@@ -1,8 +1,7 @@
 import Chess from "./Chess";
 
-export default class Jiang extends Chess{
 
-    _x = 4;
+export default class Xiang extends Chess{
 
     _y = 0;
 
@@ -10,14 +9,18 @@ export default class Jiang extends Chess{
 
     _canMoveY = 1;
 
-    _id = 0;
+    _id = 2;
+
+    init(data){
+        this.x = data.index ? 6:2;
+    }
 
     checkPositionALL(x,y){
         return this.checkMoveRange(x,y) && this.checkMoveRule(x,y) && this.checkMovePosition(x,y)
     }
 
     checkMoveRange(x,y){
-            return ( x <= 5 && x >= 3 && y >= 0 && y <= 2);
+            return ( x <= 6 && x >= 4 && y >= 0 && y <= 2);
     }
 
     checkMoveRule(x,y){

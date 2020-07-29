@@ -15,7 +15,11 @@ cc.Class({
     // onLoad () {},
 
     init(entity){
-
+        if(!entity)return;
+        var pos = entity.getBoardPosition();
+        this.setPosition(cc.v2(pos.x,pos.y));
+        this.node.angle = entity.getRotation();
+        this.content.spriteFrame = entity.camp === constant.camp.Red ? this.redSprite[entity.id] : this.blackSprite[entity.id]
     },
 
     setPosition(pos){
