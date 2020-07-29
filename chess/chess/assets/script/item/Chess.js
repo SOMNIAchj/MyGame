@@ -31,7 +31,7 @@ export default class chess{
 
     _canMoveX = 0;
 
-    _camMoveY = 0;
+    _canMoveY = 0;
 
     _canMoveList = [];
 
@@ -39,6 +39,10 @@ export default class chess{
 
     constructor(){
 
+    }
+
+    checkMoveRange(){
+        return ( x < 9 && x >= 0 && y >= 0 && y < 10);
     }
 
 }
