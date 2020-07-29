@@ -1,3 +1,5 @@
+import constants from "../base/constants";
+
 cc.Class({
     extends: cc.Component,
 
@@ -12,10 +14,13 @@ cc.Class({
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {},
+    onLoad () {
+
+    },
 
     init(entity){
         if(!entity)return;
+        this.entity = entity;
         var pos = entity.getBoardPosition();
         this.setPosition(cc.v2(pos.x,pos.y));
         this.node.angle = entity.getRotation();
@@ -35,7 +40,8 @@ cc.Class({
     },
 
     Death(){
-
+        this.entity.State = constant.ChessState.Die;
     }
+
     // update (dt) {},
 });
