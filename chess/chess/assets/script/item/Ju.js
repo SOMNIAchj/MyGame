@@ -10,7 +10,8 @@ export default class Ju extends Chess{
 
     _id = 3;
 
-    init(data){
+    constructor(data){
+        super(data)
         this.x = data.index ? 8 :0;
     }
 

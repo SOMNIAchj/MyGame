@@ -6,6 +6,7 @@ cc.Class({
     properties: {
         checkerboard:cc.Node,
         item:cc.Prefab,
+        clickNode:cc.Node,
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -14,6 +15,13 @@ cc.Class({
         window.GameMgr =  new gameManager(this);
         poolMgr.creatPoolNode(this.item,32);
         this.setfield();
+        this.register()
+    },
+
+    register(){
+      this.clickNode.on(cc.Node.EventType.TOUCH_START,this.touchStart,this)
+      this.clickNode.on(cc.Node.EventType.TOUCH_MOVE,this.touchMove,this)
+      this.clickNode.on(cc.Node.EventType.TOUCH_END,this.touchEnd,this)
     },
 
     setfield(){
@@ -28,5 +36,21 @@ cc.Class({
 
     },
 
+    touchStart(event){
+        var location = event.getLocation();
+        var pos = {
+            x:location.x,
+            y:location.y - this.clickNode.height/2,
+        }
+        console.log(pos)
+    },
+
+    touchMove(){
+
+    },
+
+    touchEnd(){
+
+    }
     // update (dt) {},
 });

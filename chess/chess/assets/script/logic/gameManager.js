@@ -88,5 +88,45 @@ export default class gameManager{
         return entity;
     }
 
+    getChessByPosition(x,y){
+        const pos = this.getPosByPosition(x,y)
+
+
+    }
+
+    getPosByPosition(x,y){
+        let pos = {
+            x:0,
+            y:0
+        };
+        const horizontal = constant.horizontal;
+        const vertical = constant.vertical;
+        let minX = 0;
+        let minY = 0;
+        for (let i = 0; i < horizontal.length; i++) {
+            const tempX = horizontal[i];
+            let tempDeltX = Math.abs(x - tempX);
+            if(!minX){
+                minX = tempDeltX
+            }
+            if( tempDeltX < minX){
+                minX = tempDeltX;
+                pos.x = i
+            }
+        }
+        for (let n = 0; n < vertical.length; n++) {
+            const tempY = vertical[n];
+            let tempDeltY = Math.abs(y - tempY);
+            if(!minY){
+                minY = tempDeltY
+            }
+            if( tempDeltY < minY){
+                minY = tempDeltY;
+                pos.i = n
+            }
+        }
+        return pos
+    }
+
 }
 

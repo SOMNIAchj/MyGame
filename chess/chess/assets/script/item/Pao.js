@@ -10,7 +10,8 @@ export default class Pao extends Chess{
 
     _id = 5;
 
-    init(data){
+    constructor(data){
+        super(data);
         this.x = data.index ? 7:1;
     }
 

@@ -11,7 +11,8 @@ export default class Xiang extends Chess{
 
     _id = 2;
 
-    init(data){
+    constructor(data){
+        super(data);
         this.x = data.index ? 6:2;
     }
 

@@ -63,11 +63,6 @@ export default class Chess{
     constructor(data){
         this.State = data.state;
         this.camp = data.camp;
-        this.init(data)
-    }
-
-    init(data){
-
     }
 
     checkMoveRange(){

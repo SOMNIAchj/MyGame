@@ -10,7 +10,8 @@ export default class Ma extends Chess{
 
     _id = 4;
 
-    init(data){
+    constructor(data){
+        super(data);
         this.x = data.index ? 7 :1;
     }
 

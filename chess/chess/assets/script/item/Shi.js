@@ -10,7 +10,8 @@ export default class Shi extends Chess{
 
     _id = 1;
 
-    init(data){
+    constructor(data){
+        super(data);
         this.x = data.index ? 5 :3;
     }
 

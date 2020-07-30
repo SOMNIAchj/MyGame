@@ -9,7 +9,8 @@ export default class Bin extends Chess{
 
     _id = 6;
 
-    init(data){
+    constructor(data){
+        super(data);
         switch(data.index){
             case 0:
                 this.x = 0;
