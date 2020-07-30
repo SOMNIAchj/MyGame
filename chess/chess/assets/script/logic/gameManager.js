@@ -90,7 +90,7 @@ export default class gameManager{
 
     getChessByPosition(x,y){
         const pos = this.getPosByPosition(x,y)
-
+        return pos;
 
     }
 
@@ -122,7 +122,7 @@ export default class gameManager{
             }
             if( tempDeltY < minY){
                 minY = tempDeltY;
-                pos.i = n
+                pos.y = n
             }
         }
         return pos

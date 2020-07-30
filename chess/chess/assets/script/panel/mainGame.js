@@ -12,6 +12,7 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
+        this.screenSize = cc.view.getVisibleSize();
         window.GameMgr =  new gameManager(this);
         poolMgr.creatPoolNode(this.item,32);
         this.setfield();
@@ -38,10 +39,9 @@ cc.Class({
 
     touchStart(event){
         var location = event.getLocation();
-        var pos = {
-            x:location.x,
-            y:location.y - this.clickNode.height/2,
-        }
+        let x =location.x-this.screenSize.width/2;
+        let y =location.y - this.screenSize.height/2;
+        var pos =GameMgr.getChessByPosition(x,y)
         console.log(pos)
     },
 
