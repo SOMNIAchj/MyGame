@@ -7,7 +7,22 @@ import Ma from "../item/Ma";
 import Ju from "../item/Ju";
 import Xiang from "../item/Xiang";
 import Shi from "../item/Shi";
+import cell from "../base/cell";
 export default class gameManager{
+    get AllChessList() {
+        return this._AllChessList;
+    }
+
+    set AllChessList(value) {
+        this._AllChessList = value;
+    }
+    get AllChess() {
+        return this._AllChess;
+    }
+
+    set AllChess(value) {
+        this._AllChess = value;
+    }
     get pole() {
         return this._pole;
     }
@@ -16,15 +31,9 @@ export default class gameManager{
         this._pole = value;
     }
 
-    get AllChessList() {
-        return this._AllChessList;
-    }
-
-    set AllChessList(value) {
-        this._AllChessList = value;
-    }
-
     _AllChessList = [];
+
+    _AllChess = {};
 
     _pole = true;
 
@@ -32,28 +41,39 @@ export default class gameManager{
         this.gameScene = game;
         window.constant = new constants();
         window.poolMgr = new poolManager();
+        this.initAllChess()
+    }
+    //初始化棋格子管理类
+    initAllChess(){
+        for (let i = 0; i < 9; i++) {
+            this.AllChess[i] = {};
+            for (let j = 0; j < 10; j++) {
+                this.AllChess[i][j] = new cell()
+            }
+        }
     }
 
     createAllChessClass = function(){
         this.setOneCamp(constant.camp.Red);
         this.setOneCamp(constant.camp.Black);
-    }
+    };
 
     setOneCamp = function(camp){
         let cont = constant.chessCont;
         for (let i = 0; i <cont.length; i++) {
             this.setOneClass(i,cont,camp)
         }
-    }
+    };
 
     setOneClass = function(id,cont,camp){
         for (let i = 0; i < cont[id]; i++) {
             let entity = this.getOneChess(i,id,camp);
             if(entity){
-                this.AllChessList.push(entity)
+                this.AllChessList.push(entity);
+                this.addChessToMgr(entity)
             }
         }
-    }
+    };
 
     getOneChess(index,id,camp){
         let data = {
@@ -86,13 +106,17 @@ export default class gameManager{
                 break;
         }
         return entity;
+    };
+
+    addChessToMgr(enyity){
+        this.AllChess[enyity.x][enyity.y].chess = enyity;
     }
 
     getChessByPosition(x,y){
-        const pos = this.getPosByPosition(x,y)
+        const pos = this.getPosByPosition(x,y);
         return pos;
 
-    }
+    };
 
     getPosByPosition(x,y){
         let pos = {

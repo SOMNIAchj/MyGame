@@ -1,5 +1,12 @@
 
 export default class Chess{
+    get node() {
+        return this._node;
+    }
+
+    set node(value) {
+        this._node = value;
+    }
     get id() {
         return this._id;
     }
@@ -59,6 +66,8 @@ export default class Chess{
     _camp = null;
 
     _State = null;
+
+    _node = null;
 
     constructor(data){
         this.State = data.state;
