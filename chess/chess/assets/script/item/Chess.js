@@ -72,6 +72,7 @@ export default class Chess{
     constructor(data){
         this.State = data.state;
         this.camp = data.camp;
+        this.y = (this.camp === constant.camp.Red && GameMgr.pole || this.camp === constant.camp.Black && !GameMgr.pole) ? 0 : 9;
     }
 
     checkMoveRange(){
@@ -83,13 +84,13 @@ export default class Chess{
           x:0,
           y:0
         };
-        if(this.camp === constant.camp.Red && GameMgr.pole || this.camp === constant.camp.Black && !GameMgr.pole){
+        // if(this.camp === constant.camp.Red && GameMgr.pole || this.camp === constant.camp.Black && !GameMgr.pole){
             postion.x = constant.horizontal[this.x];
             postion.y = constant.vertical[this.y];
-        }else {
-            postion.x = constant.horizontal[ 8 - this.x];
-            postion.y = constant.vertical[ 9 - this.y];
-        }
+        // }else {
+        //     postion.x = constant.horizontal[ 8 - this.x];
+        //     postion.y = constant.vertical[ 9 - this.y];
+        // }
         return postion;
     }
 

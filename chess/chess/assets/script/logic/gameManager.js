@@ -43,6 +43,7 @@ export default class gameManager{
         window.poolMgr = new poolManager();
         this.initAllChess()
     }
+
     //初始化棋格子管理类
     initAllChess(){
         for (let i = 0; i < 9; i++) {
@@ -114,7 +115,7 @@ export default class gameManager{
 
     getChessByPosition(x,y){
         const pos = this.getPosByPosition(x,y);
-        return pos;
+        return this.AllChess[pos.x][pos.y].chess ;
 
     };
 

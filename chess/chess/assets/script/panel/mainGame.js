@@ -38,11 +38,10 @@ cc.Class({
     },
 
     touchStart(event){
-        var location = event.getLocation();
-        let x =location.x-this.screenSize.width/2;
-        let y =location.y - this.screenSize.height/2;
-        var pos =GameMgr.getChessByPosition(x,y)
-        console.log(pos)
+        let location = event.getLocation();
+        let posS = this.worldConvertLocalPoint(this.clickNode,cc.v2(location.x,location.y));
+        let chess = GameMgr.getChessByPosition(posS.x,posS.y);
+        console.log(chess)
     },
 
     touchMove(){
@@ -51,6 +50,14 @@ cc.Class({
 
     touchEnd(){
 
+    },
+
+    worldConvertLocalPoint(node, worldPoint){
+        let nodePos = null;
+        if (node) {
+            nodePos =  node.convertToNodeSpaceAR(worldPoint);
+        }
+        return nodePos;
     }
     // update (dt) {},
 });

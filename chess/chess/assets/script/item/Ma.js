@@ -2,8 +2,6 @@ import Chess from "./Chess";
 
 export default class Ma extends Chess{
 
-    _y = 0;
-
     _canMoveX = 1;
 
     _canMoveY = 1;

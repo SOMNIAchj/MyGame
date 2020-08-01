@@ -1,7 +1,6 @@
 import Chess from "./Chess";
 
 export default class Bin extends Chess{
-    _y = 3;
 
     _canMoveX = 1;
 
@@ -28,6 +27,7 @@ export default class Bin extends Chess{
                 this.x = 8;
                 break;
         }
+        this.y = (this.camp === constant.camp.Red && GameMgr.pole || this.camp === constant.camp.Black && !GameMgr.pole) ? 3 : 6;
     }
 
     checkPositionALL(x,y){

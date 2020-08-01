@@ -4,8 +4,6 @@ export default class Jiang extends Chess{
 
     _x = 4;
 
-    _y = 0;
-
     _canMoveX = 1;
 
     _canMoveY = 1;

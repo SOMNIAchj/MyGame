@@ -2,8 +2,6 @@ import Chess from "./Chess";
 
 export default class Pao extends Chess{
 
-    _y = 2;
-
     _canMoveX = 1;
 
     _canMoveY = 1;
@@ -13,6 +11,7 @@ export default class Pao extends Chess{
     constructor(data){
         super(data);
         this.x = data.index ? 7:1;
+        this.y = (this.camp === constant.camp.Red && GameMgr.pole || this.camp === constant.camp.Black && !GameMgr.pole) ? 2 : 7;
     }
 
     checkPositionALL(x,y){
