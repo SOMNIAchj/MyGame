@@ -41,7 +41,8 @@ cc.Class({
         let location = event.getLocation();
         let posS = this.worldConvertLocalPoint(this.clickNode,cc.v2(location.x,location.y));
         let chess = GameMgr.getChessByPosition(posS.x,posS.y);
-        console.log(chess)
+        if(!chess)return;
+        chess.click()
     },
 
     touchMove(){

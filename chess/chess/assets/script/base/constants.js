@@ -39,5 +39,13 @@ export default class constants{
     camp = {
         Red:0,
         Black:1,
+    };
+    //实例事件
+    EntityEventName = {
+        selectChess:"selectChess"//选着棋子
+    };
+    //全局事件
+    EventName = {
+        unSelectChess:"unSelectChess"
     }
 }

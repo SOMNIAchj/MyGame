@@ -1,3 +1,4 @@
+import EventManager from "../logic/EventManager";
 
 export default class Chess{
     get node() {
@@ -70,6 +71,7 @@ export default class Chess{
     _node = null;
 
     constructor(data){
+        this.event = new EventManager()
         this.State = data.state;
         this.camp = data.camp;
         this.y = (this.camp === constant.camp.Red && GameMgr.pole || this.camp === constant.camp.Black && !GameMgr.pole) ? 0 : 9;
@@ -104,4 +106,16 @@ export default class Chess{
         return rotation;
     }
 
+    click(){
+        this.unSelfAll();
+        this.selectSelf();
+    }
+
+    selectSelf(){
+        this.event.dispatchEvent(constant.EntityEventName.selectChess)
+    }
+
+    unSelfAll(){
+        clievent.dispatchEvent(constant.EventName.unSelectChess)
+    }
 }

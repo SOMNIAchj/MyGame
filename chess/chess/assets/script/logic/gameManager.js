@@ -8,6 +8,7 @@ import Ju from "../item/Ju";
 import Xiang from "../item/Xiang";
 import Shi from "../item/Shi";
 import cell from "../base/cell";
+import EventManager from "./EventManager";
 export default class gameManager{
     get AllChessList() {
         return this._AllChessList;
@@ -41,6 +42,7 @@ export default class gameManager{
         this.gameScene = game;
         window.constant = new constants();
         window.poolMgr = new poolManager();
+        window.clievent = new EventManager();
         this.initAllChess()
     }
 

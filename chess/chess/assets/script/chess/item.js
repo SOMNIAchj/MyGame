@@ -15,12 +15,13 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-
+        clievent.registerEvent(constant.EventName.unSelectChess,this.setUnSelect.bind(this))
     },
 
     init(entity){
         if(!entity)return;
         this.entity = entity;
+        entity.event.registerEvent(constant.EntityEventName.selectChess,this.setSelect.bind(this));
         var pos = entity.getBoardPosition();
         this.setPosition(cc.v2(pos.x,pos.y));
         this.node.angle = entity.getRotation();
