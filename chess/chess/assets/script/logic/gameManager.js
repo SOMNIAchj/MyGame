@@ -10,6 +10,20 @@ import Shi from "../item/Shi";
 import cell from "../base/cell";
 import EventManager from "./EventManager";
 export default class gameManager{
+    get currentCamp() {
+        return this._currentCamp;
+    }
+
+    set currentCamp(value) {
+        this._currentCamp = value;
+    }
+    get selectChess() {
+        return this._selectChess;
+    }
+
+    set selectChess(value) {
+        this._selectChess = value;
+    }
     get AllChessList() {
         return this._AllChessList;
     }
@@ -38,12 +52,20 @@ export default class gameManager{
 
     _pole = true;
 
+    _selectChess = null;
+
+    _currentCamp = null;
+
     constructor(game){
         this.gameScene = game;
         window.constant = new constants();
         window.poolMgr = new poolManager();
         window.clievent = new EventManager();
-        this.initAllChess()
+        this.initAllChess();
+    }
+
+    initGame(){
+        this.currentCamp = constant.camp.Red;
     }
 
     //初始化棋格子管理类
@@ -115,10 +137,30 @@ export default class gameManager{
         this.AllChess[enyity.x][enyity.y].chess = enyity;
     }
 
+    setChessToMgr(enyity = this.selectChess ,x,y){
+        this.AllChess[x][y].chess = enyity;
+    }
+
+    setChessDead(entity){
+        this.AllChess[entity.x][entity.y].chess = null;
+        entity.setDead();
+    }
+
+    setChessPosition(x,y){
+        if(this.selectChess&&this.selectChess.checkPositionALL(x,y)){
+            let chess =  this.AllChess[x][y].chess;
+            if(chess){
+                this.setChessDead(chess)
+            }
+            this.AllChess[this.selectChess.x][this.selectChess.y].chess = null;
+            this.AllChess[x][y].chess = this.selectChess;
+            this.selectChess.setPosition(x,y)
+        }
+    }
+
     getChessByPosition(x,y){
         const pos = this.getPosByPosition(x,y);
         return this.AllChess[pos.x][pos.y].chess ;
-
     };
 
     getPosByPosition(x,y){

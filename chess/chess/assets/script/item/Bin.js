@@ -30,16 +30,13 @@ export default class Bin extends Chess{
         this.y = (this.camp === constant.camp.Red && GameMgr.pole || this.camp === constant.camp.Black && !GameMgr.pole) ? 3 : 6;
     }
 
-    checkPositionALL(x,y){
-        return this.checkMoveRange(x,y) && this.checkMoveRule(x,y) && this.checkMovePosition(x,y)
-    }
 
     checkMoveRange(x,y){
-            return ( x <= 6 && x >= 4 && y >= 0 && y <= 2);
+            return true
     }
 
     checkMoveRule(x,y){
-        return (x = this.x && Math.abs(y - this.y) === 1)|| (y = this.y && Math.abs(x - this.x) === 1)
+        return (x === this.x && Math.abs(y - this.y) === 1)|| (y === this.y && Math.abs(x - this.x) === 1)
     }
 
     checkMovePosition(x,y){

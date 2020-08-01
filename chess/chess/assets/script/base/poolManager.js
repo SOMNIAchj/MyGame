@@ -23,8 +23,8 @@ export default class poolManager{
     }
 
     putNodeIntoPool(node){
-        if(this._pool[name]){
-            return this._pool[name].put(node);
+        if(this._pool[node.name]){
+            this._pool[node.name].put(node);
         }else {
 
         }

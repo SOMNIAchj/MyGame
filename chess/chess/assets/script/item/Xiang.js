@@ -14,16 +14,17 @@ export default class Xiang extends Chess{
         this.x = data.index ? 6:2;
     }
 
-    checkPositionALL(x,y){
-        return this.checkMoveRange(x,y) && this.checkMoveRule(x,y) && this.checkMovePosition(x,y)
-    }
-
     checkMoveRange(x,y){
-            return ( x <= 6 && x >= 4 && y >= 0 && y <= 2);
+        if(this.isDown()){
+            return y <= 4;
+        }else {
+            return y >= 5;
+        }
+
     }
 
     checkMoveRule(x,y){
-        return (x = this.x && Math.abs(y - this.y) === 1)|| (y = this.y && Math.abs(x - this.x) === 1)
+        return (Math.abs(y - this.y) === 2&& Math.abs(x - this.x) === 2)
     }
 
     checkMovePosition(x,y){

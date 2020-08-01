@@ -17,6 +17,7 @@ cc.Class({
         poolMgr.creatPoolNode(this.item,32);
         this.setfield();
         this.register()
+        GameMgr.initGame()
     },
 
     register(){
@@ -33,16 +34,18 @@ cc.Class({
                 node.getComponent("item").init(GameMgr.AllChessList[i])
         }
     },
-    start () {
-
-    },
 
     touchStart(event){
         let location = event.getLocation();
-        let posS = this.worldConvertLocalPoint(this.clickNode,cc.v2(location.x,location.y));
-        let chess = GameMgr.getChessByPosition(posS.x,posS.y);
-        if(!chess)return;
-        chess.click()
+        let posWorld = this.worldConvertLocalPoint(this.clickNode,cc.v2(location.x,location.y));
+        let chess = GameMgr.getChessByPosition(posWorld.x,posWorld.y);
+        if(chess&&(chess.camp === GameMgr.currentCamp)){//选子
+                GameMgr.selectChess = chess;
+                chess.click()
+        }else{//移动
+            let pos = GameMgr.getPosByPosition(posWorld.x,posWorld.y);
+            GameMgr.setChessPosition(pos.x,pos.y)
+        }
     },
 
     touchMove(){

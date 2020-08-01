@@ -18,14 +18,6 @@ export default class Pao extends Chess{
         return this.checkMoveRange(x,y) && this.checkMoveRule(x,y) && this.checkMovePosition(x,y)
     }
 
-    checkMoveRange(x,y){
-            return ( x <= 6 && x >= 4 && y >= 0 && y <= 2);
-    }
-
-    checkMoveRule(x,y){
-        return (x = this.x && Math.abs(y - this.y) === 1)|| (y = this.y && Math.abs(x - this.x) === 1)
-    }
-
     checkMovePosition(x,y){
             return true
     }

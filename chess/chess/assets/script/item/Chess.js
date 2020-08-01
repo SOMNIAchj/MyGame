@@ -1,13 +1,6 @@
 import EventManager from "../logic/EventManager";
 
 export default class Chess{
-    get node() {
-        return this._node;
-    }
-
-    set node(value) {
-        this._node = value;
-    }
     get id() {
         return this._id;
     }
@@ -68,42 +61,55 @@ export default class Chess{
 
     _State = null;
 
-    _node = null;
-
     constructor(data){
         this.event = new EventManager()
         this.State = data.state;
         this.camp = data.camp;
-        this.y = (this.camp === constant.camp.Red && GameMgr.pole || this.camp === constant.camp.Black && !GameMgr.pole) ? 0 : 9;
+        this.y = this.isDown() ? 0 : 9;
     }
 
-    checkMoveRange(){
-        return ( x < 9 && x >= 0 && y >= 0 && y < 10);
+    //检查所有
+    checkPositionALL(x,y){
+        return this.checkMoveRange(x,y) && this.checkMoveRule(x,y) && this.checkMovePosition(x,y)
+    }
+
+    //移动规则
+    checkMoveRule(x,y){
+        return (x === this.x)|| (y ===this.y)
+    }
+
+    //移动范围
+    checkMoveRange(x,y){
+        return true;//( x < 9 && x >= 0 && y >= 0 && y < 10);
+    }
+
+    //目标点位
+    checkMovePosition(x,y){
+        return true
     }
 
     getBoardPosition(){
         var postion = {
-          x:0,
-          y:0
+            x:0,
+            y:0
         };
-        // if(this.camp === constant.camp.Red && GameMgr.pole || this.camp === constant.camp.Black && !GameMgr.pole){
-            postion.x = constant.horizontal[this.x];
-            postion.y = constant.vertical[this.y];
-        // }else {
-        //     postion.x = constant.horizontal[ 8 - this.x];
-        //     postion.y = constant.vertical[ 9 - this.y];
-        // }
+        postion.x = constant.horizontal[this.x];
+        postion.y = constant.vertical[this.y];
         return postion;
     }
 
     getRotation(){
         var rotation = 0;
-        if(this.camp === constant.camp.Red && GameMgr.pole || this.camp === constant.camp.Black && !GameMgr.pole){
+        if(this.isDown()){
             rotation = 0;
         }else {
             rotation = 180;
         }
         return rotation;
+    }
+
+    isDown(){
+        return this.camp === constant.camp.Red && GameMgr.pole || this.camp === constant.camp.Black && !GameMgr.pole
     }
 
     click(){
@@ -117,5 +123,15 @@ export default class Chess{
 
     unSelfAll(){
         clievent.dispatchEvent(constant.EventName.unSelectChess)
+    }
+
+    setDead(){
+        this.event.dispatchEvent(constant.EntityEventName.dead)
+    }
+
+    setPosition(x,y){
+        this.x = x;
+        this.y = y;
+        this.event.dispatchEvent(constant.EntityEventName.setPosition)
     }
 }

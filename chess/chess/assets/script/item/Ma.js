@@ -13,10 +13,6 @@ export default class Ma extends Chess{
         this.x = data.index ? 7 :1;
     }
 
-    checkPositionALL(x,y){
-        return this.checkMoveRange(x,y) && this.checkMoveRule(x,y) && this.checkMovePosition(x,y)
-    }
-
     checkMoveRange(x,y){
             return ( x <= 6 && x >= 4 && y >= 0 && y <= 2);
     }

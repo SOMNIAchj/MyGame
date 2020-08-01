@@ -22,14 +22,16 @@ cc.Class({
         if(!entity)return;
         this.entity = entity;
         entity.event.registerEvent(constant.EntityEventName.selectChess,this.setSelect.bind(this));
-        var pos = entity.getBoardPosition();
-        this.setPosition(cc.v2(pos.x,pos.y));
+        entity.event.registerEvent(constant.EntityEventName.setPosition,this.setPosition.bind(this));
+        entity.event.registerEvent(constant.EntityEventName.dead,this.Death.bind(this));
+        this.setPosition();
         this.node.angle = entity.getRotation();
         this.content.spriteFrame = entity.camp === constant.camp.Red ? this.redSprite[entity.id] : this.blackSprite[entity.id]
     },
 
-    setPosition(pos){
-        this.node.setPosition(pos)
+    setPosition(){
+        var pos = this.entity.getBoardPosition();
+        this.node.setPosition(cc.v2(pos.x,pos.y))
     },
 
     setSelect(){
@@ -42,6 +44,7 @@ cc.Class({
 
     Death(){
         this.entity.State = constant.ChessState.Die;
+        poolMgr.putNodeIntoPool(this.node)
     }
 
     // update (dt) {},

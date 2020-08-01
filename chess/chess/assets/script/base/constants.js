@@ -42,7 +42,9 @@ export default class constants{
     };
     //实例事件
     EntityEventName = {
-        selectChess:"selectChess"//选着棋子
+        selectChess:"selectChess",//选着棋子
+        setPosition:"setPosition",//设置位置
+        dead:"dead"//被吃
     };
     //全局事件
     EventName = {
