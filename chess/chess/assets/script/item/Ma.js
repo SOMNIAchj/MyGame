@@ -2,10 +2,6 @@ import Chess from "./Chess";
 
 export default class Ma extends Chess{
 
-    _canMoveX = 1;
-
-    _canMoveY = 1;
-
     _id = 4;
 
     constructor(data){
@@ -13,47 +9,52 @@ export default class Ma extends Chess{
         this.x = data.index ? 7 :1;
     }
 
-    checkMoveRange(x,y){
-            return ( x <= 6 && x >= 4 && y >= 0 && y <= 2);
-    }
-
     checkMoveRule(x,y){
-        return (x = this.x && Math.abs(y - this.y) === 1)|| (y = this.y && Math.abs(x - this.x) === 1)
-    }
-
-    checkMovePosition(x,y){
-            return true
+        return ((Math.abs(x - this.x) === 2&& Math.abs(y - this.y) === 1)|| (Math.abs(x - this.x) === 1&& Math.abs(y - this.y) === 2))
     }
 
     getNextListPosition(){
         this.canMoveList = [];
         for (let h = 0; h < 2 ; h++) {
             for (let v = 0; v < 2; v++) {
-                this.moveOneWay();
+                this.moveOneWay(h,v);
             }
         }
     }
 
     moveOneWay(h,v){
-        let list = [];
-        let canMove = h ? this._canMoveX:this._canMoveY; //横竖
-        let det = v ? -1:1; //上下 或 左右
+        let detX = 0; //左右
+        let detY = 0; //上下
+        let detIX = 0;
+        let detIY = 0;
+        let judgeX = 0;
+        let judgeY = 0;
+        if(h){
+            detY = 0;
+            detX = v ? 2 : -2;
+            judgeX = v ? 1 : -1;
+        }else {
+            detY = v ? 2 : -2;
+            detX = 0;
+            judgeY = v ? 1 : -1
+        }
         let pos = {
             x:this.x,
             y:this.y
         };
-        for (let i = 0; i < canMove; i++) {
-             pos = {
-                x: h ? pos.x + det : pos.x,
-
-                y: h ? pos.y : pos.y + det,
+        for (let i = 0; i < 2; i++) {
+            if(h){
+                detIY = i ? -1:1;
+            }else {
+                detIX = i ? -1:1;
+            }
+            pos = {
+                x: this.x + detX + detIX,
+                y: this.y + detY + detIY,
             };
-            if(this.checkPositionALL(pos.x,pos.y)){
-                list.push(pos)
+            if(this.checkPositionALL(pos.x,pos.y)&&!GameMgr.AllChess[this.x +judgeX][this.y +judgeY].chess){
+                this.canMoveList.push(pos)
             }
         }
-        return list
     }
-
-
 }

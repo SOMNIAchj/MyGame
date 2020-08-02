@@ -3,10 +3,6 @@ import Chess from "./Chess";
 
 export default class Xiang extends Chess{
 
-    _canMoveX = 1;
-
-    _canMoveY = 1;
-
     _id = 2;
 
     constructor(data){
@@ -16,9 +12,9 @@ export default class Xiang extends Chess{
 
     checkMoveRange(x,y){
         if(this.isDown()){
-            return y <= 4;
+            return y <= 4&&super.checkMoveRange();
         }else {
-            return y >= 5;
+            return y >= 5&&super.checkMoveRange();
         }
 
     }
@@ -27,39 +23,29 @@ export default class Xiang extends Chess{
         return (Math.abs(y - this.y) === 2&& Math.abs(x - this.x) === 2)
     }
 
-    checkMovePosition(x,y){
-            return true
-    }
-
     getNextListPosition(){
         this.canMoveList = [];
         for (let h = 0; h < 2 ; h++) {
             for (let v = 0; v < 2; v++) {
-                this.moveOneWay();
+                this.moveOneWay(h,v);
             }
         }
     }
 
     moveOneWay(h,v){
-        let list = [];
-        let canMove = h ? this._canMoveX:this._canMoveY; //横竖
-        let det = v ? -1:1; //上下 或 左右
+        let detY = h ? -2:2; //左右
+        let detX = v ? -2:2; //上下
         let pos = {
             x:this.x,
             y:this.y
         };
-        for (let i = 0; i < canMove; i++) {
-             pos = {
-                x: h ? pos.x + det : pos.x,
+        pos = {
+            x: pos.x + detX,
 
-                y: h ? pos.y : pos.y + det,
-            };
-            if(this.checkPositionALL(pos.x,pos.y)){
-                list.push(pos)
-            }
+            y: pos.y + detY,
+        };
+        if(this.checkPositionALL(pos.x,pos.y)&&!GameMgr.AllChess[(pos.x+this.x)/2][(pos.y+this.y)/2].chess){
+            this.canMoveList.push(pos)
         }
-        return list
     }
-
-
 }

@@ -51,10 +51,6 @@ export default class Chess{
 
     _y = 0;
 
-    _canMoveX = 0;
-
-    _canMoveY = 0;
-
     _canMoveList = [];
 
     _camp = null;
@@ -66,6 +62,17 @@ export default class Chess{
         this.State = data.state;
         this.camp = data.camp;
         this.y = this.isDown() ? 0 : 9;
+    }
+
+    checkInCanMoveList(x,y){
+        let flag = false;
+        for (let i = 0; i < this.canMoveList.length; i++) {
+            const canMoveListElement = this.canMoveList[i];
+            if(canMoveListElement.x === x && canMoveListElement.y === y){
+                return true
+            }
+        }
+        return flag;
     }
 
     //检查所有
@@ -80,13 +87,20 @@ export default class Chess{
 
     //移动范围
     checkMoveRange(x,y){
-        return true;//( x < 9 && x >= 0 && y >= 0 && y < 10);
+        return ( x < 9 && x >= 0 && y >= 0 && y < 10);
     }
 
     //目标点位
     checkMovePosition(x,y){
-        return true
+        let flag = true;
+        let cell = GameMgr.AllChess[x][y];
+        if(cell && cell.chess && cell.chess.camp === this.camp){
+            flag = false;
+        }
+        return flag
     }
+
+
 
     getBoardPosition(){
         var postion = {
@@ -118,7 +132,8 @@ export default class Chess{
     }
 
     selectSelf(){
-        this.event.dispatchEvent(constant.EntityEventName.selectChess)
+        this.event.dispatchEvent(constant.EntityEventName.selectChess);
+        this.getNextListPosition();
     }
 
     unSelfAll(){
@@ -133,5 +148,16 @@ export default class Chess{
         this.x = x;
         this.y = y;
         this.event.dispatchEvent(constant.EntityEventName.setPosition)
+        this.getNextListPosition()
+    }
+
+    getNextListPosition(){
+
+    }
+
+    addInCanMoveList(pos){
+        if(this.checkPositionALL(pos.x,pos.y)){
+            this.canMoveList.push(pos)
+        }
     }
 }

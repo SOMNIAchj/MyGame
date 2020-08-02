@@ -147,7 +147,7 @@ export default class gameManager{
     }
 
     setChessPosition(x,y){
-        if(this.selectChess&&this.selectChess.checkPositionALL(x,y)){
+        if(this.selectChess&&this.selectChess.checkInCanMoveList(x,y)){
             let chess =  this.AllChess[x][y].chess;
             if(chess){
                 this.setChessDead(chess)

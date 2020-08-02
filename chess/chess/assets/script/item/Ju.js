@@ -2,10 +2,6 @@ import Chess from "./Chess";
 
 export default class Ju extends Chess{
 
-    _canMoveX = 1;
-
-    _canMoveY = 1;
-
     _id = 3;
 
     constructor(data){
@@ -13,39 +9,42 @@ export default class Ju extends Chess{
         this.x = data.index ? 8 :0;
     }
 
-    checkMovePosition(x,y){
-            return true
-    }
-
     getNextListPosition(){
         this.canMoveList = [];
         for (let h = 0; h < 2 ; h++) {
             for (let v = 0; v < 2; v++) {
-                this.moveOneWay();
+                this.moveOneWay(h,v);
             }
         }
     }
 
     moveOneWay(h,v){
-        let list = [];
-        let canMove = h ? this._canMoveX:this._canMoveY; //横竖
-        let det = v ? -1:1; //上下 或 左右
+        let canMove = 0;
+        let detX = v ? 1 : -1;
+        let detY = v ? 1 : -1;
+        if(h){
+            canMove = v ? 8 - this.x : this.x;
+            detY = 0;
+        }else {
+            detX = 0;
+            canMove = v ? 9 - this.y : this.y;
+        }
         let pos = {
             x:this.x,
             y:this.y
         };
         for (let i = 0; i < canMove; i++) {
-             pos = {
-                x: h ? pos.x + det : pos.x,
-
-                y: h ? pos.y : pos.y + det,
+            pos = {
+                x: pos.x + detX,
+                y: pos.y + detY
             };
-            if(this.checkPositionALL(pos.x,pos.y)){
-                list.push(pos)
+            let cell = GameMgr.AllChess[pos.x][pos.y];
+            if(cell&&cell.chess){
+                this.addInCanMoveList(pos);
+                break;
             }
+            this.addInCanMoveList(pos);
         }
-        return list
     }
-
 
 }

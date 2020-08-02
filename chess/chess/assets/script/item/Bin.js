@@ -2,10 +2,6 @@ import Chess from "./Chess";
 
 export default class Bin extends Chess{
 
-    _canMoveX = 1;
-
-    _canMoveY = 1;
-
     _id = 6;
 
     constructor(data){
@@ -27,50 +23,57 @@ export default class Bin extends Chess{
                 this.x = 8;
                 break;
         }
-        this.y = (this.camp === constant.camp.Red && GameMgr.pole || this.camp === constant.camp.Black && !GameMgr.pole) ? 3 : 6;
+        this.y = this.isDown() ? 3 : 6;
     }
 
 
     checkMoveRange(x,y){
-            return true
+        if(this.isDown()){
+            return this.y <= y
+        }else {
+            return this.y >= y
+        }
     }
 
     checkMoveRule(x,y){
-        return (x === this.x && Math.abs(y - this.y) === 1)|| (y === this.y && Math.abs(x - this.x) === 1)
-    }
+        if(this.isDown()){
+            return (this.y > 4&&(Math.abs(x - this.x) === 1)||(Math.abs(y - this.y) === 1))
+        }else {
+            return (this.y < 5&&(Math.abs(x - this.x) === 1)||(Math.abs(y - this.y) === 1))
+        }
 
-    checkMovePosition(x,y){
-            return true
     }
 
     getNextListPosition(){
         this.canMoveList = [];
         for (let h = 0; h < 2 ; h++) {
             for (let v = 0; v < 2; v++) {
-                this.moveOneWay();
+                this.moveOneWay(h,v);
             }
         }
     }
 
     moveOneWay(h,v){
-        let list = [];
-        let canMove = h ? this._canMoveX:this._canMoveY; //横竖
-        let det = v ? -1:1; //上下 或 左右
+        let list = this.canMoveList;
+        let detX = v ? -1:1; //左右
+        let detY = v ? -1:1; //上下
+        if(h){
+            detY = 0;
+        }else {
+            detX = 0;
+        }
         let pos = {
             x:this.x,
             y:this.y
         };
-        for (let i = 0; i < canMove; i++) {
-             pos = {
-                x: h ? pos.x + det : pos.x,
+        pos = {
+            x: pos.x + detX,
 
-                y: h ? pos.y : pos.y + det,
-            };
-            if(this.checkPositionALL(pos.x,pos.y)){
-                list.push(pos)
-            }
+            y: pos.y + detY,
+        };
+        if(this.checkPositionALL(pos.x,pos.y)){
+            list.push(pos)
         }
-        return list
     }
 
 
