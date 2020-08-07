@@ -29,9 +29,9 @@ export default class Bin extends Chess{
 
     checkMoveRange(x,y){
         if(this.isDown()){
-            return this.y <= y
+            return this.y <= y&&super.checkMoveRange(x,y)
         }else {
-            return this.y >= y
+            return this.y >= y&&super.checkMoveRange(x,y)
         }
     }
 

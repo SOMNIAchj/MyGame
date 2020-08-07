@@ -12,11 +12,10 @@ export default class Xiang extends Chess{
 
     checkMoveRange(x,y){
         if(this.isDown()){
-            return y <= 4&&super.checkMoveRange();
+            return y <= 4&&super.checkMoveRange(x,y);
         }else {
-            return y >= 5&&super.checkMoveRange();
+            return y >= 5&&super.checkMoveRange(x,y);
         }
-
     }
 
     checkMoveRule(x,y){

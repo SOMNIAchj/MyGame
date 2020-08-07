@@ -68,6 +68,10 @@ export default class gameManager{
         this.currentCamp = constant.camp.Red;
     }
 
+    changeCurrentCamp(){
+        this.currentCamp =  this.currentCamp === constant.camp.Red ? constant.camp.Black:constant.camp.Red;
+    }
+
     //初始化棋格子管理类
     initAllChess(){
         for (let i = 0; i < 9; i++) {
@@ -133,12 +137,12 @@ export default class gameManager{
         return entity;
     };
 
-    addChessToMgr(enyity){
-        this.AllChess[enyity.x][enyity.y].chess = enyity;
+    addChessToMgr(entity){
+        this.AllChess[entity.x][entity.y].chess = entity;
     }
 
-    setChessToMgr(enyity = this.selectChess ,x,y){
-        this.AllChess[x][y].chess = enyity;
+    setChessToMgr(entity = this.selectChess ,x,y){
+        this.AllChess[x][y].chess = entity;
     }
 
     setChessDead(entity){
@@ -154,7 +158,9 @@ export default class gameManager{
             }
             this.AllChess[this.selectChess.x][this.selectChess.y].chess = null;
             this.AllChess[x][y].chess = this.selectChess;
-            this.selectChess.setPosition(x,y)
+            this.selectChess.setPosition(x,y);
+            this.changeCurrentCamp();
+            GameMgr.selectChess = null;
         }
     }
 

@@ -32,6 +32,7 @@ cc.Class({
     setPosition(){
         var pos = this.entity.getBoardPosition();
         this.node.setPosition(cc.v2(pos.x,pos.y))
+        this.setUnSelect();
     },
 
     setSelect(){

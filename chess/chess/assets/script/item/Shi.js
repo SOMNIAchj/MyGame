@@ -10,7 +10,11 @@ export default class Shi extends Chess{
     }
 
     checkMoveRange(x,y){
-            return ( x <= 5 && x >= 3 && y >= 0 && y <= 2);
+        if(this.isDown()){
+            return ( x <= 5 && x >= 3 && y >= 0 && y <= 2)&&super.checkMoveRange(x,y);
+        }else {
+            return ( x <= 5 && x >= 3 && y >= 7 && y <= 9)&&super.checkMoveRange(x,y);
+        }
     }
 
     checkMoveRule(x,y){
