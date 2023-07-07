@@ -10,6 +10,10 @@ export class startScene extends Component {
     @property(Label)
     labelLoading:Label
     start() {
+        // for (var i = 0; i < 256; i++) {
+            console.log(0x80)
+        // }
+      
         this.labelLoading.string = '加载中。。。'
         this.startBtnNode.active  = false
         resMgr.init(()=>{
