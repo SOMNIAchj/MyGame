@@ -3,7 +3,24 @@ export enum actionType {
     red,
     blk
 }
+// 棋子编号
+export enum PIECEID {
+    PIECE_KING,
+    PIECE_ADVISOR,
+    PIECE_BISHOP,
+    PIECE_KNIGHT,
+    PIECE_ROOK,
+    PIECE_CANNON,
+    PIECE_PAWN,
+}
+
+export enum GameState {
+    gaming,
+    stop,
+    pause
+}
 class  Constant{
+    MAX_GEN_MOVES = 128
     /**棋盘初始设置*/
     InitBoard = [
         0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,

@@ -1,6 +1,6 @@
 import { _decorator, Component, EventInfo, EventTouch,screen, input, Input, Node, view, Vec3 } from 'cc';
 import { battleMgr } from '../script/battleMgr';
-import { actionType } from '../script/constant';
+import { GameState, actionType } from '../script/constant';
 import resMgr from '../script/resMgr';
 import { itemCell } from '../prefabs/items/itemCell';
 const { ccclass, property } = _decorator;
@@ -28,9 +28,10 @@ export class gameScene extends Component {
         this.scaleY = this.screenSzie.height / this.viewSzie.height
         console.log(this.scaleX,this.scaleY)
         input.on(Input.EventType.TOUCH_START,this.click,this)
-        input.on(Input.EventType.TOUCH_MOVE,this.click,this)
+        // input.on(Input.EventType.TOUCH_MOVE,this.click,this)
 
-        battleMgr.initBattle(actionType.red);
+        battleMgr.initBattle(this,actionType.red);
+       
         this.refreshCell();
     }
     /**刷新棋盘 */
@@ -64,6 +65,7 @@ export class gameScene extends Component {
         let loc = event.getLocation();
         let pos = new Vec3(loc.x * this.scaleX - this.screenSzie.width/2 - this.cellParent.position.x, loc.y * this.scaleX - this.screenSzie.height/2 - this.cellParent.position.y)
         let data =  battleMgr.judgePosByLoc(pos)
+        battleMgr.clickBoard(data)
         console.log(data)
     }
 

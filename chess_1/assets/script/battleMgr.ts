@@ -1,27 +1,41 @@
-import { actionType, constant } from "./constant";
+import { GameState, PIECEID, actionType, constant } from "./constant";
 
 class BattleMgr{
     /**棋盘 */
     boardMap
-    action:actionType
     /**索引 */
     sellectIndex
     sdPlayer = 0
+    /**棋盘反转 */
+    isReversal
+    gameScene
+    gameState:GameState
+    /**是否正在被将军 */
+    isCheckIng
+    /**获取棋盘是否反转 */
+    getIsReversal(){
+      return this.isReversal
+    }
 
+    getIsGaming(){
+        return this.gameState == GameState.gaming
+    }
 
+    setGameState(gameState){
+        this.gameState = gameState
+    }
 
-
-
-
-
-    initBattle(actionType:actionType){
-        this.action = actionType
+    initBattle(gameScene,type:actionType){
+        this.gameScene = gameScene;
+        this.isReversal = type == actionType.blk;
+        this.isCheckIng = false
         this.initMap()
     }
 
     /**初始化 */
     initMap(){
         this.boardMap = new Array(16*16).fill(0)
+        this.copyInitMap()
         this.logMap()
     }
     /**赋值初始化地图 */
@@ -205,10 +219,10 @@ class BattleMgr{
      * @returns 
      */
     isSellect(index){
-        if(this.action == actionType.red){
-            return (this.boardMap[index]&8) !== 0
+        if(this.sdPlayer){
+            return (this.boardMap[index]&16) !== 0
         }else{
-            return (this.boardMap[index]&16) != 0
+            return (this.boardMap[index]&8) != 0
         }
     }
     /**
@@ -233,29 +247,372 @@ class BattleMgr{
             y:Math.round(-loc.y/73)
         }
     }
+    /**搬一步棋的棋子*/
+    MovePiece(mv) {
+        let sqSrc, sqDst, pc, pcCaptured;
+        sqSrc = this.SRC(mv);
+        sqDst = this.DST(mv);
+        pcCaptured = this.boardMap[sqDst];
+        this.DelPiece(sqDst);
+        pc = this.boardMap[sqSrc];
+        this.DelPiece(sqSrc);
+        this.AddPiece(sqDst, pc);
+        return pcCaptured;
+    }
+
+/**撤消搬一步棋的棋子*/
+UndoMovePiece(mv,pcCaptured) {
+  let sqSrc, sqDst, pc;
+  sqSrc = this.SRC(mv);
+  sqDst = this.DST(mv);
+  pc = this.boardMap[sqDst];
+  this.DelPiece(sqDst);
+  this.AddPiece(sqSrc, pc);
+  this.AddPiece(sqDst, pcCaptured);
+}
+
+/**走一步棋*/
+MakeMove(mv) {
+  let pc;
+  pc = this.MovePiece(mv);
+  if (this.Checked()) {
+    this.UndoMovePiece(mv, pc);
+    return false;
+  }
+  this.ChangeSide();
+  return true;
+}
+
+// 生成所有走法
+GenerateMoves(mvs) {
+  let i, j, nGenMoves, nDelta, sqSrc, sqDst;
+  let pcSelfSide, pcOppSide, pcSrc, pcDst;
+  // 生成所有走法，需要经过以下几个步骤：
+
+  nGenMoves = 0;
+  pcSelfSide = this.SIDE_TAG(this.sdPlayer);
+  pcOppSide = this.OPP_SIDE_TAG(this.sdPlayer);
+  for (sqSrc = 0; sqSrc < 256; sqSrc ++) {
+
+    // 1. 找到一个本方棋子，再做以下判断：
+    pcSrc = this.boardMap[sqSrc];
+    if ((pcSrc & pcSelfSide) == 0) {
+      continue;
+    }
+
+    // 2. 根据棋子确定走法
+    switch (pcSrc - pcSelfSide) {
+    case PIECEID.PIECE_KING:
+      for (i = 0; i < 4; i ++) {
+        sqDst = sqSrc + constant.KingDelta[i];
+        if (!this.IN_FORT(sqDst)) {
+          continue;
+        }
+        pcDst = this.boardMap[sqDst];
+        if ((pcDst & pcSelfSide) == 0) {
+          mvs[nGenMoves] = this.MOVE(sqSrc, sqDst);
+          nGenMoves ++;
+        }
+      }
+      break;
+    case PIECEID.PIECE_ADVISOR:
+      for (i = 0; i < 4; i ++) {
+        sqDst = sqSrc + constant.AdvisorDelta[i];
+        if (!this.IN_FORT(sqDst)) {
+          continue;
+        }
+        pcDst = this.boardMap[sqDst];
+        if ((pcDst & pcSelfSide) == 0) {
+          mvs[nGenMoves] = this.MOVE(sqSrc, sqDst);
+          nGenMoves ++;
+        }
+      }
+      break;
+    case PIECEID.PIECE_BISHOP:
+      for (i = 0; i < 4; i ++) {
+        sqDst = sqSrc + constant.AdvisorDelta[i];
+        if (!(this.IN_BOARD(sqDst) && this.HOME_HALF(sqDst, this.sdPlayer) && this.boardMap[sqDst] == 0)) {
+          continue;
+        }
+        sqDst += constant.AdvisorDelta[i];
+        pcDst = this.boardMap[sqDst];
+        if ((pcDst & pcSelfSide) == 0) {
+          mvs[nGenMoves] = this.MOVE(sqSrc, sqDst);
+          nGenMoves ++;
+        }
+      }
+      break;
+    case PIECEID.PIECE_KNIGHT:
+      for (i = 0; i < 4; i ++) {
+        sqDst = sqSrc + constant.KingDelta[i];
+        if (this.boardMap[sqDst] != 0) {
+          continue;
+        }
+        for (j = 0; j < 2; j ++) {
+          sqDst = sqSrc + constant.KnightDelta[i][j];
+          if (!this.IN_BOARD(sqDst)) {
+            continue;
+          }
+          pcDst = this.boardMap[sqDst];
+          if ((pcDst & pcSelfSide) == 0) {
+            mvs[nGenMoves] = this.MOVE(sqSrc, sqDst);
+            nGenMoves ++;
+          }
+        }
+      }
+      break;
+    case PIECEID.PIECE_ROOK:
+      for (i = 0; i < 4; i ++) {
+        nDelta = constant.KingDelta[i];
+        sqDst = sqSrc + nDelta;
+        while (this.IN_BOARD(sqDst)) {
+          pcDst = this.boardMap[sqDst];
+          if (pcDst == 0) {
+              mvs[nGenMoves] = this.MOVE(sqSrc, sqDst);
+              nGenMoves ++;
+          } else {
+            if ((pcDst & pcOppSide) != 0) {
+              mvs[nGenMoves] = this.MOVE(sqSrc, sqDst);
+              nGenMoves ++;
+            }
+            break;
+          }
+          sqDst += nDelta;
+        }
+      }
+      break;
+    case PIECEID.PIECE_CANNON:
+      for (i = 0; i < 4; i ++) {
+        nDelta = constant.KingDelta[i];
+        sqDst = sqSrc + nDelta;
+        while (this.IN_BOARD(sqDst)) {
+          pcDst = this.boardMap[sqDst];
+          if (pcDst == 0) {
+            mvs[nGenMoves] = this.MOVE(sqSrc, sqDst);
+            nGenMoves ++;
+          } else {
+            break;
+          }
+          sqDst += nDelta;
+        }
+        sqDst += nDelta;
+        while (this.IN_BOARD(sqDst)) {
+          pcDst = this.boardMap[sqDst];
+          if (pcDst != 0) {
+            if ((pcDst & pcOppSide) != 0) {
+              mvs[nGenMoves] = this.MOVE(sqSrc, sqDst);
+              nGenMoves ++;
+            }
+            break;
+          }
+          sqDst += nDelta;
+        }
+      }
+      break;
+    case PIECEID.PIECE_PAWN:
+      sqDst = this.SQUARE_FORWARD(sqSrc, this.sdPlayer);
+      if (this.IN_BOARD(sqDst)) {
+        pcDst = this.boardMap[sqDst];
+        if ((pcDst & pcSelfSide) == 0) {
+          mvs[nGenMoves] = this.MOVE(sqSrc, sqDst);
+          nGenMoves ++;
+        }
+      }
+      if (this.AWAY_HALF(sqSrc, this.sdPlayer)) {
+        for (nDelta = -1; nDelta <= 1; nDelta += 2) {
+          sqDst = sqSrc + nDelta;
+          if (this.IN_BOARD(sqDst)) {
+            pcDst = this.boardMap[sqDst];
+            if ((pcDst & pcSelfSide) == 0) {
+              mvs[nGenMoves] = this.MOVE(sqSrc, sqDst);
+              nGenMoves ++;
+            }
+          }
+        }
+      }
+      break;
+    }
+  }
+  return nGenMoves;
+}
+
+// 判断走法是否合理
+LegalMove(mv) :boolean{
+  /**
+   * @param sqSrc 起点
+   * @param sqDst 终点
+   */
+  let sqSrc, sqDst, sqPin;
+  let pcSelfSide, pcSrc, pcDst, nDelta;
+  // 判断走法是否合法，需要经过以下的判断过程：
+
+  // 1. 判断起始格是否有自己的棋子
+  sqSrc = this.SRC(mv);
+  pcSrc = this.boardMap[sqSrc];
+  pcSelfSide = this.SIDE_TAG(this.sdPlayer);
+  if ((pcSrc & pcSelfSide) == 0) {
+    return false;
+  }
+
+  // 2. 判断目标格是否有自己的棋子
+  sqDst = this.DST(mv);
+  pcDst = this.boardMap[sqDst];
+  if ((pcDst & pcSelfSide) != 0) {
+    return false;
+  }
+
+  // 3. 根据棋子的类型检查走法是否合理
+  switch (pcSrc - pcSelfSide) {
+  case PIECEID.PIECE_KING:
+    return this.IN_FORT(sqDst) && this.KING_SPAN(sqSrc, sqDst);
+  case PIECEID.PIECE_ADVISOR:
+    return this.IN_FORT(sqDst) && this.ADVISOR_SPAN(sqSrc, sqDst);
+  case PIECEID.PIECE_BISHOP:
+    return this.SAME_HALF(sqSrc, sqDst) && this.BISHOP_SPAN(sqSrc, sqDst) &&
+        this.boardMap[this.BISHOP_PIN(sqSrc, sqDst)] == 0;
+  case PIECEID.PIECE_KNIGHT:
+    sqPin = this.KNIGHT_PIN(sqSrc, sqDst);
+    return sqPin != sqSrc && this.boardMap[sqPin] == 0;
+  case PIECEID.PIECE_ROOK:
+  case PIECEID.PIECE_CANNON:
+    if (this.SAME_RANK(sqSrc, sqDst)) {
+      nDelta = (sqDst < sqSrc ? -1 : 1);
+    } else if (this.SAME_FILE(sqSrc, sqDst)) {
+      nDelta = (sqDst < sqSrc ? -16 : 16);
+    } else {
+      return false;
+    }
+    sqPin = sqSrc + nDelta;
+    while (sqPin != sqDst && this.boardMap[sqPin] == 0) {
+      sqPin += nDelta;
+    }
+    if (sqPin == sqDst) {
+      return pcDst == 0 || pcSrc - pcSelfSide == PIECEID.PIECE_ROOK;
+    } else if (pcDst != 0 && pcSrc - pcSelfSide == PIECEID.PIECE_CANNON) {
+      sqPin += nDelta;
+      while (sqPin != sqDst && this.boardMap[sqPin] == 0) {
+        sqPin += nDelta;
+      }
+      return sqPin == sqDst;
+    } else {
+      return false;
+    }
+  case PIECEID.PIECE_PAWN:
+    if (this.AWAY_HALF(sqDst,this.sdPlayer) && (sqDst == sqSrc - 1 || sqDst == sqSrc + 1)) {
+      return true;
+    }
+    return sqDst == this.SQUARE_FORWARD(sqSrc, this.sdPlayer);
+  default:
+    return false;
+  }
+}
+
+// 判断是否被将军
+Checked():boolean {
+  let i, j, sqSrc, sqDst;
+  let pcSelfSide, pcOppSide, pcDst, nDelta;
+  pcSelfSide = this.SIDE_TAG(this.sdPlayer);
+  pcOppSide = this.OPP_SIDE_TAG(this.sdPlayer);
+  // 找到棋盘上的帅(将)，再做以下判断：
+
+  for (sqSrc = 0; sqSrc < 256; sqSrc ++) {
+    if (this.boardMap[sqSrc] != pcSelfSide + PIECEID.PIECE_KING) {
+      continue;
+    }
+
+    // 1. 判断是否被对方的兵(卒)将军
+    if (this.boardMap[this.SQUARE_FORWARD(sqSrc, this.sdPlayer)] == pcOppSide + PIECEID.PIECE_PAWN) {
+      return true;
+    }
+    for (nDelta = -1; nDelta <= 1; nDelta += 2) {
+      if (this.boardMap[sqSrc + nDelta] == pcOppSide + PIECEID.PIECE_PAWN) {
+        return true;
+      }
+    }
+
+    // 2. 判断是否被对方的马将军(以仕(士)的步长当作马腿)
+    for (i = 0; i < 4; i ++) {
+      if (this.boardMap[sqSrc + constant.AdvisorDelta[i]] != 0) {
+        continue;
+      }
+      for (j = 0; j < 2; j ++) {
+        pcDst = this.boardMap[sqSrc + constant.KnightCheckDelta[i][j]];
+        if (pcDst == pcOppSide + PIECEID.PIECE_KNIGHT) {
+          return true;
+        }
+      }
+    }
+
+    // 3. 判断是否被对方的车或炮将军(包括将帅对脸)
+    for (i = 0; i < 4; i ++) {
+      nDelta = constant.KingDelta[i];
+      sqDst = sqSrc + nDelta;
+      while (this.IN_BOARD(sqDst)) {
+        pcDst = this.boardMap[sqDst];
+        if (pcDst != 0) {
+          if (pcDst == pcOppSide + PIECEID.PIECE_ROOK || pcDst == pcOppSide + PIECEID.PIECE_KING) {
+            return true;
+          }
+          break;
+        }
+        sqDst += nDelta;
+      }
+      sqDst += nDelta;
+      while (this.IN_BOARD(sqDst)) {
+        let pcDst = this.boardMap[sqDst];
+        if (pcDst != 0) {
+          if (pcDst == pcOppSide + PIECEID.PIECE_CANNON) {
+            return true;
+          }
+          break;
+        }
+        sqDst += nDelta;
+      }
+    }
+    return false;
+  }
+  return false;
+}
+
+  /**判断是否被杀*/
+  IsMate() {
+    let i, nGenMoveNum, pcCaptured;
+    let mvs = [];
+
+    nGenMoveNum = this.GenerateMoves(mvs);
+    if(nGenMoveNum > constant.MAX_GEN_MOVES) return console.error('超过最大步数！')
+    for (i = 0; i < nGenMoveNum; i ++) {
+      pcCaptured = this.MovePiece(mvs[i]);
+      if (!this.Checked()) {
+        this.UndoMovePiece(mvs[i], pcCaptured);
+        return false;
+      } else {
+        this.UndoMovePiece(mvs[i], pcCaptured);
+      }
+    }
+    return true;
+  }
     /**点击棋盘  */
     clickBoard(pos){
-        let index = pos.y * 26 + pos.x
+        if(!this.getIsGaming())return
+        let sqDst = pos.y * 16 + pos.x
         if(this.sellectIndex){
-            let target = this.boardMap[index];
-            if(target){
-                let type = this.boardMap[this.sellectIndex];
-                switch(type){
-                     /**�� */
-                    case 8||16:{
-                        
-                        let list = []
-                       
-                       
-                        
-                        return list
-                    }
-                }
-
-
-            }else{
-                console.log('��������')
+          let mv = this.MOVE(this.sellectIndex,sqDst)
+          let islegal = this.LegalMove(mv);
+          if(islegal){
+            this.MakeMove(mv)
+            let isMate = this.IsMate();
+            if(isMate){
+                this.setGameState(GameState.stop)
+                return
             }
+            let isCheck = this.Checked();
+            if(isCheck){
+                console.log('将军!!')
+            }
+            this.sellectIndex = 0
+            this.gameScene.refreshCell();
+          }
         }
     }
 

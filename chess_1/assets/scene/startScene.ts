@@ -1,6 +1,8 @@
 import { _decorator, Component, director, Label, Node } from 'cc';
 import { gameScene } from './gameScene';
 import resMgr from '../script/resMgr';
+import { battleMgr } from '../script/battleMgr';
+import { GameState } from '../script/constant';
 const { ccclass, property } = _decorator;
 
 @ccclass('startScene')
@@ -27,6 +29,7 @@ export class startScene extends Component {
     }
 
     startgame(){
+        battleMgr.setGameState(GameState.gaming)
         director.loadScene('gameScene')
     }
 }
