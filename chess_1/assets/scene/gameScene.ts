@@ -37,27 +37,39 @@ export class gameScene extends Component {
     /**刷新棋盘 */
     refreshCell(){
         let map = battleMgr.getMap();
+        let childrens = this.cellParent.children;
+        let j = 0;
         for (var i = 0; i < map.length; i++) {
            if(map[i] > 1){
-                let cell = resMgr.getItemByName('itemCell',this.cellParent)
+                let cell = childrens[j];
+                if(!cell){
+                    cell = resMgr.getItemByName('itemCell',this.cellParent)
+                }
+                j++
                 cell.getComponent(cell.name)['init'](this,map[i] ,i)
            }
         }
-    }
-
-    /**设置选中的棋子 */
-    setSellectNode(com:itemCell){
-        this.setUnSellectNode()
-        this.sellectNode = com;
-        this.sellectNode.sellect();
-    }
-
-    /**设置取消选中的棋子 */
-    setUnSellectNode(){  
-        if(this.sellectNode){
-            this.sellectNode.unSellect()
+        for (var i = j; i < childrens.length; i++) {
+            let cell = childrens[j];
+            if(cell){
+                resMgr.putItem(cell);
+            }
         }
     }
+
+    // /**设置选中的棋子 */
+    // setSellectNode(com:itemCell){
+    //     this.setUnSellectNode()
+    //     this.sellectNode = com;
+    //     this.sellectNode.sellect();
+    // }
+
+    // /**设置取消选中的棋子 */
+    // setUnSellectNode(){  
+    //     if(this.sellectNode){
+    //         this.sellectNode.unSellect()
+    //     }
+    // }
 
     /**点击棋盘 */
     click(event:EventTouch){

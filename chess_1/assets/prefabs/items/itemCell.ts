@@ -12,7 +12,7 @@ export class itemCell extends Component {
     index;
     gameScene:gameScene
     start() {
-        this.node.on(Input.EventType.TOUCH_START,this.click,this)
+        // this.node.on(Input.EventType.TOUCH_START,this.click,this)
     }
 
     init(gameScene:gameScene,type,index){
@@ -32,29 +32,15 @@ export class itemCell extends Component {
         let x = index%16 * 73
         let y = Math.floor(index/16) * 73
         this.node.setPosition(new Vec3(x,-y,0))
-        this.choose.active  = false
+        this.choose.active = index == battleMgr.getSellectIndex()
     }
 
-    /**点击 */
-    click(){
-        if(!battleMgr.getIsGaming())return
-        /**已经选择 */
-        let readySellect = battleMgr.judgeIsSelect(this.index);
-        if(readySellect){
-            this.gameScene.setUnSellectNode()
-            return
-        }
-        let isSellect = battleMgr.sellectCell(this.index);
-        if(isSellect){
-            this.gameScene.setSellectNode(this)
-        }
-    }
-    sellect(){
-        this.choose.active  = true
-    }
-    unSellect(){
-        this.choose.active  = false
-    }
+    // sellect(){
+    //     this.choose.active  = true
+    // }
+    // unSellect(){
+    //     this.choose.active  = false
+    // }
     update(deltaTime: number) {
         
     }

@@ -60,7 +60,7 @@ class ResMgr{
     init(cb){
         this.loadItems(()=>{
             this._loadAssets('images/cell',cb,this._spriteFrames,SpriteFrame)
-            // this._loadAssets('audio',cb,this._audio,AudioClip)
+            this._loadAssets('audio',cb,this._audio,AudioClip)
         })
     }
 

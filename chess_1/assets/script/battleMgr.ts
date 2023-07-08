@@ -1,3 +1,4 @@
+import audioMgr from "./audioMgr";
 import { GameState, PIECEID, actionType, constant } from "./constant";
 
 class BattleMgr{
@@ -204,14 +205,6 @@ class BattleMgr{
         this.boardMap[sq] = 0;
     }
 
-    /**选择棋子 */
-    sellectCell(index){
-        let flag = this.isSellect(index);
-        if(flag){
-            this.sellectIndex = index
-        }
-        return flag
-    }
 
     /**
      * 是否选中棋子
@@ -224,19 +217,6 @@ class BattleMgr{
         }else{
             return (this.boardMap[index]&8) != 0
         }
-    }
-    /**
-     * 判断是否是选中的棋子
-     * @param index 
-     */
-    judgeIsSelect(index){
-        if(this.sellectIndex == index){
-            this.sellectIndex  = null
-            return true
-        }else{
-            return false
-        }
-      
     }
     /**
      * 获取坐标
@@ -595,15 +575,22 @@ Checked():boolean {
     /**点击棋盘  */
     clickBoard(pos){
         if(!this.getIsGaming())return
-        let sqDst = pos.y * 16 + pos.x
-        if(this.sellectIndex){
+        let sqDst = pos.y * 16 + pos.x;
+        let isSellect  = this.isSellect(sqDst);
+        if(isSellect){
+          this.sellectIndex = sqDst;
+          this.gameScene.refreshCell();
+        }else if(this.sellectIndex){
           let mv = this.MOVE(this.sellectIndex,sqDst)
           let islegal = this.LegalMove(mv);
           if(islegal){
             this.MakeMove(mv)
             let isMate = this.IsMate();
             if(isMate){
+                let name = this.sdPlayer ? 'WIN':'LOSS'
+                audioMgr.playOneShot(name)
                 this.setGameState(GameState.stop)
+                this.gameScene.refreshCell();
                 return
             }
             let isCheck = this.Checked();
@@ -612,9 +599,16 @@ Checked():boolean {
             }
             this.sellectIndex = 0
             this.gameScene.refreshCell();
+          }else{
+            audioMgr.playOneShot('fobiden')
           }
+        }else{
+          audioMgr.playOneShot('click')
         }
     }
 
+    getSellectIndex(){
+        return this.sellectIndex
+    }
 }
 export const battleMgr = new BattleMgr()

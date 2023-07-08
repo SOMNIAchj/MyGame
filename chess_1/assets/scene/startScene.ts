@@ -3,6 +3,7 @@ import { gameScene } from './gameScene';
 import resMgr from '../script/resMgr';
 import { battleMgr } from '../script/battleMgr';
 import { GameState } from '../script/constant';
+import audioMgr from '../script/audioMgr';
 const { ccclass, property } = _decorator;
 
 @ccclass('startScene')
@@ -15,7 +16,7 @@ export class startScene extends Component {
         // for (var i = 0; i < 256; i++) {
             console.log(0x80)
         // }
-      
+        audioMgr.init()
         this.labelLoading.string = '加载中。。。'
         this.startBtnNode.active  = false
         resMgr.init(()=>{
